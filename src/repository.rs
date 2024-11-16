@@ -31,6 +31,12 @@ pub struct CreateTodo {
     text: String,
 }
 
+impl CreateTodo {
+    pub fn new(text: String) -> Self {
+        Self { text }
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone, PartialOrd, PartialEq)]
 pub struct UpdateTodo {
     text: Option<String>,
@@ -135,15 +141,23 @@ mod test {
 
         // update
         let text = "update todo text".to_string();
-        let todo = repository.update(1, UpdateTodo {
-            text: Some(text.clone()),
-            completed: Some(true),
-        }).expect("failed update todo.");
-        assert_eq!(Todo {
-            id,
-            text,
-            completed: true,
-        }, todo);
+        let todo = repository
+            .update(
+                1,
+                UpdateTodo {
+                    text: Some(text.clone()),
+                    completed: Some(true),
+                },
+            )
+            .expect("failed update todo.");
+        assert_eq!(
+            Todo {
+                id,
+                text,
+                completed: true,
+            },
+            todo
+        );
 
         // delete
         let res = repository.delete(id);
