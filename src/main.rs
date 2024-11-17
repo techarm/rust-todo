@@ -2,15 +2,17 @@ use std::env;
 use std::net::SocketAddr;
 use std::sync::Arc;
 
+use axum::{Json, Router};
 use axum::extract::Extension;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::routing::{get, post};
-use axum::{Json, Router};
+use dotenv::dotenv;
 use serde::{Deserialize, Serialize};
+use sqlx::PgPool;
 
 use crate::handlers::{all_todo, create_todo, delete_todo, find_todo, update_todo};
-use crate::repositories::{TodoRepository, TodoRepositoryForMemory};
+use crate::repositories::{TodoRepository, TodoRepositoryForDb};
 
 mod handlers;
 mod repositories;
@@ -21,8 +23,14 @@ async fn main() {
     let log_level = env::var("RUST_LOG").unwrap_or("info".to_string());
     env::set_var("RUST_LOG", log_level);
     tracing_subscriber::fmt::init();
+    dotenv().ok();
 
-    let repository = TodoRepositoryForMemory::new();
+    let database_url = &env::var("DATABASE_URL").expect("undefined [DATABASE_URL]");
+    tracing::debug!("start connect database...");
+    let pool = PgPool::connect(database_url)
+        .await
+        .expect(&format!("fail connect database, url is [{}]", database_url));
+    let repository = TodoRepositoryForDb::new(pool.clone());
     let app = create_app(repository);
 
     // run our app with hyper, listening globally on port 3000
@@ -80,7 +88,7 @@ mod test {
     use hyper::header;
     use tower::ServiceExt;
 
-    use crate::repositories::{CreateTodo, Todo};
+    use crate::repositories::{CreateTodo, Todo, TodoRepositoryForMemory};
 
     use super::*;
 
