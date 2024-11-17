@@ -2,11 +2,11 @@ use std::env;
 use std::net::SocketAddr;
 use std::sync::Arc;
 
-use axum::{Json, Router};
 use axum::extract::Extension;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::routing::{get, post};
+use axum::{Json, Router};
 use dotenv::dotenv;
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
@@ -88,8 +88,8 @@ mod test {
     use hyper::header;
     use tower::ServiceExt;
 
-    use crate::repositories::{CreateTodo, Todo};
     use crate::repositories::test_utils::TodoRepositoryForMemory;
+    use crate::repositories::{CreateTodo, Todo};
 
     use super::*;
 
