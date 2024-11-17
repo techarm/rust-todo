@@ -2,18 +2,18 @@ use std::env;
 use std::net::SocketAddr;
 use std::sync::Arc;
 
+use axum::{Json, Router};
 use axum::extract::Extension;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::routing::{get, post};
-use axum::{Json, Router};
 use serde::{Deserialize, Serialize};
 
 use crate::handlers::{all_todo, create_todo, delete_todo, find_todo, update_todo};
-use crate::repository::{TodoRepository, TodoRepositoryForMemory};
+use crate::repositories::{TodoRepository, TodoRepositoryForMemory};
 
 mod handlers;
-mod repository;
+mod repositories;
 
 #[tokio::main]
 async fn main() {
@@ -80,7 +80,7 @@ mod test {
     use hyper::header;
     use tower::ServiceExt;
 
-    use crate::repository::{CreateTodo, Todo};
+    use crate::repositories::{CreateTodo, Todo};
 
     use super::*;
 
