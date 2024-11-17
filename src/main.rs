@@ -88,7 +88,8 @@ mod test {
     use hyper::header;
     use tower::ServiceExt;
 
-    use crate::repositories::{CreateTodo, Todo, TodoRepositoryForMemory};
+    use crate::repositories::{CreateTodo, Todo};
+    use crate::repositories::test_utils::TodoRepositoryForMemory;
 
     use super::*;
 
