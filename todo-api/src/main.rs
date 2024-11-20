@@ -8,8 +8,10 @@ use axum::response::IntoResponse;
 use axum::routing::{get, post};
 use axum::{Json, Router};
 use dotenv::dotenv;
+use hyper::header::CONTENT_TYPE;
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
+use tower_http::cors::{Any, CorsLayer, Origin};
 
 use crate::handlers::{all_todo, create_todo, delete_todo, find_todo, update_todo};
 use crate::repositories::{TodoRepository, TodoRepositoryForDb};
@@ -35,7 +37,7 @@ async fn main() {
 
     // run our app with hyper, listening globally on port 3000
     // let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
-    let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
+    let addr = SocketAddr::from(([0, 0, 0, 0], 8000));
     tracing::debug!("listening on {}", addr);
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
@@ -55,6 +57,12 @@ fn create_app<T: TodoRepository>(repository: T) -> Router {
                 .patch(update_todo::<T>),
         )
         .layer(Extension(Arc::new(repository)))
+        .layer(
+            CorsLayer::new()
+                .allow_origin(Origin::exact("http://localhost:3000".parse().unwrap()))
+                .allow_methods(Any)
+                .allow_headers(vec![CONTENT_TYPE]),
+        )
 }
 
 async fn root() -> &'static str {

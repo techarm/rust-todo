@@ -60,9 +60,9 @@ impl TodoRepository for TodoRepositoryForDb {
         let todo = sqlx::query_as::<_, Todo>(
             "insert into todos (text, completed) values ($1, false) returning *",
         )
-            .bind(payload.text.clone())
-            .fetch_one(&self.pool)
-            .await?;
+        .bind(payload.text.clone())
+        .fetch_one(&self.pool)
+        .await?;
         Ok(todo)
     }
 
@@ -90,11 +90,11 @@ impl TodoRepository for TodoRepositoryForDb {
         let todo = sqlx::query_as::<_, Todo>(
             "update todos set text = $1, completed = $2 where id = $3 returning *",
         )
-            .bind(payload.text.unwrap_or(old_todo.text))
-            .bind(payload.completed.unwrap_or(old_todo.completed))
-            .bind(id)
-            .fetch_one(&self.pool)
-            .await?;
+        .bind(payload.text.unwrap_or(old_todo.text))
+        .bind(payload.completed.unwrap_or(old_todo.completed))
+        .bind(id)
+        .fetch_one(&self.pool)
+        .await?;
         Ok(todo)
     }
 
