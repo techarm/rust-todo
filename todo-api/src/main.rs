@@ -2,19 +2,19 @@ use std::env;
 use std::net::SocketAddr;
 use std::sync::Arc;
 
+use axum::{Json, Router};
 use axum::extract::Extension;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::routing::{get, post};
-use axum::{Json, Router};
 use dotenv::dotenv;
 use hyper::header::CONTENT_TYPE;
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 use tower_http::cors::{Any, CorsLayer, Origin};
 
-use crate::handlers::{all_todo, create_todo, delete_todo, find_todo, update_todo};
-use crate::repositories::{TodoRepository, TodoRepositoryForDb};
+use crate::handlers::todo::{all_todo, create_todo, delete_todo, find_todo, update_todo};
+use crate::repositories::todo::{TodoRepository, TodoRepositoryForDb};
 
 mod handlers;
 mod repositories;
@@ -96,8 +96,8 @@ mod test {
     use hyper::header;
     use tower::ServiceExt;
 
-    use crate::repositories::test_utils::TodoRepositoryForMemory;
     use crate::repositories::{CreateTodo, Todo};
+    use crate::repositories::test_utils::TodoRepositoryForMemory;
 
     use super::*;
 
