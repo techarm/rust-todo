@@ -1,9 +1,9 @@
 use std::sync::Arc;
 
-use axum::{async_trait, BoxError, Json};
 use axum::extract::{Extension, FromRequest, Path, RequestParts};
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
+use axum::{async_trait, BoxError, Json};
 use serde::de::DeserializeOwned;
 use validator::Validate;
 
