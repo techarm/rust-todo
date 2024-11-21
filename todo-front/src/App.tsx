@@ -1,34 +1,38 @@
-import { FC, useState } from 'react';
-import { Box, createTheme, Stack, ThemeProvider, Typography } from '@mui/material';
-import { NewTodoPayload, Todo } from './types/todo';
-import TodoForm from './components/TodoForm';
-import TodoList from './components/TodoList';
-import { addTodoItem } from './lib/api/todo';
+import { useEffect, useState, FC } from 'react';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { Box, Stack, Typography } from '@mui/material';
+import { NewTodoPayload, Todo } from '@/types/todo';
+import TodoForm from '@/components/TodoForm';
+import TodoList from '@/components/TodoList';
+import { addTodoItem, deleteTodoItem, getTodoItems, updateTodoItem } from '@/lib/api/todo';
 
 const TodoApp: FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
 
   const onSubmit = async (payload: NewTodoPayload) => {
-    if (!payload.text) {
-      return;
-    }
-    const newTodo = await addTodoItem(payload);
-    setTodos((prev) => [newTodo, ...prev]);
+    await addTodoItem(payload);
+    const todos = await getTodoItems();
+    setTodos(todos);
   };
 
-  const onUpdate = (updateTodo: Todo) => {
-    setTodos(
-      todos.map((todo) => {
-        if (todo.id === updateTodo.id) {
-          return {
-            ...todo,
-            ...updateTodo,
-          };
-        }
-        return todo;
-      })
-    );
+  const onUpdate = async (updateTodo: Todo) => {
+    await updateTodoItem(updateTodo);
+    const todos = await getTodoItems();
+    setTodos(todos);
   };
+
+  const onDelete = async (id: number) => {
+    await deleteTodoItem(id);
+    const todos = await getTodoItems();
+    setTodos(todos);
+  };
+
+  useEffect(() => {
+    (async () => {
+      const todos = await getTodoItems();
+      setTodos(todos);
+    })();
+  }, []);
 
   return (
     <>
@@ -59,7 +63,7 @@ const TodoApp: FC = () => {
         <Box maxWidth={700} width="100%">
           <Stack spacing={5}>
             <TodoForm onSubmit={onSubmit} />
-            <TodoList todos={todos} onUpdate={onUpdate} />
+            <TodoList todos={todos} onUpdate={onUpdate} onDelete={onDelete} />
           </Stack>
         </Box>
       </Box>

@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
-import { NewTodoPayload } from '../types/todo';
 import { Box, Button, TextField, Paper, Grid } from '@mui/material';
+import { NewTodoPayload } from '@/types/todo';
 
 type Prosp = {
   onSubmit: (newTodo: NewTodoPayload) => void;

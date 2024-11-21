@@ -1,4 +1,4 @@
-import { NewTodoPayload, Todo } from '../../types/todo';
+import { NewTodoPayload, Todo } from '@/types/todo';
 
 export const addTodoItem = async (payload: NewTodoPayload) => {
   const res = await fetch('http://localhost:8000/todos', {
@@ -13,4 +13,38 @@ export const addTodoItem = async (payload: NewTodoPayload) => {
   }
   const json: Todo = await res.json();
   return json;
+};
+
+export const getTodoItems = async () => {
+  const res = await fetch('http://localhost:8000/todos');
+  if (!res.ok) {
+    throw new Error('get todo request failed');
+  }
+  const json: Todo[] = await res.json();
+  return json;
+};
+
+export const updateTodoItem = async (todo: Todo) => {
+  const { id, ...updateTodo } = todo;
+  const res = await fetch(`http://localhost:8000/todos/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(updateTodo),
+  });
+  if (!res.ok) {
+    throw new Error('update todo request failed');
+  }
+  const json: Todo = await res.json();
+  return json;
+};
+
+export const deleteTodoItem = async (id: number) => {
+  const res = await fetch(`http://localhost:8000/todos/${id}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) {
+    throw new Error('delete todo request failed');
+  }
 };
